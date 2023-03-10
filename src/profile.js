@@ -1,41 +1,86 @@
-import React, { useState } from "react";
-// import './styles.css';
-
+import React, { useState, useEffect } from "react";
 const GithubProfileFinder = () => {
   const [username, setUsername] = useState("");
-  const [userProfile, setUserProfile] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState({});
+  const [repos, setRepos] = useState([]);
+  const [message, setMessage] = useState("");
 
-  const fetchUserProfile = async () => {
-    setLoading(true);
-    const response = await fetch(`https://api.github.com/users/${username}`);
-    const data = await response.json();
-    setLoading(false);
-    setUserProfile(data);
+  const handleInputChange = (event) => {
+    setUsername(event.target.value);
   };
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      const response = await fetch(`https://api.github.com/users/${username}`);
+      const data = await response.json();
+      // console.log(data, "resp");
+
+      if (data.id !== undefined) {
+        setUser(data);
+        // console.log(data, "resp");
+        setMessage("");
+      } else {
+        setMessage(data.message);
+      }
+    };
+
+    const fetchRepos = async () => {
+      const response = await fetch(
+        `https://api.github.com/users/${username}/repos?per_page=5`
+      );
+      const data = await response.json();
+      if (user) {
+        setRepos(data);
+      }
+    };
+
+    if (username !== "") {
+      fetchUser();
+      fetchRepos();
+    }
+  }, [username]);
+
   return (
-    <div className="container">
-      <h1>Find a GitHub Profile</h1>
-      <input
-        type="text"
-        placeholder="Enter a GitHub username"
-        value={username}
-        onChange={(event) => setUsername(event.target.value)}
-      />
-      <button onClick={fetchUserProfile} disabled={!username}>
-        {loading ? "Loading..." : "Search"}
-      </button>
-      {userProfile && (
-        <div className="profile-card">
-          <img
-            src={userProfile.avatar_url}
-            alt={`${userProfile.login}'s avatar`}
-          />
-          <h2>{userProfile.login}</h2>
-          <p>{userProfile.bio}</p>
-          <a href={userProfile.html_url}>View profile</a>
-        </div>
+    <div className="github-profile-finder">
+      {message !== "" && <div>{message}</div>}
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Enter a GitHub username"
+          value={username}
+          onChange={handleInputChange}
+        />
+      </div>
+      {user !== "" && (
+        <>
+          <div className="user-info">
+            <img src={user.avatar_url} alt={user.name} className="avatar" />
+            <h2>{user.name}</h2>
+            <p>{user.bio}</p>
+            <ul>
+              <li>{user.followers} followers</li>
+              <li>{user.following} following</li>
+              <li>{user.public_repos} repositories</li>
+            </ul>
+          </div>
+          <div className="user-repos">
+            <h2>Latest Repositories</h2>
+            <ul>
+              {repos.length &&
+                repos.map((repo) => (
+                  <li key={repo.id}>
+                    <a
+                      href={repo.html_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {repo.name}
+                    </a>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        </>
       )}
     </div>
   );
