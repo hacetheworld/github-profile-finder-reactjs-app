@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 const GithubProfileFinder = () => {
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState("hacetheworld");
   const [user, setUser] = useState({});
   const [repos, setRepos] = useState([]);
   const [message, setMessage] = useState("");
