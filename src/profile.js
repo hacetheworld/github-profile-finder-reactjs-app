@@ -41,47 +41,53 @@ const GithubProfileFinder = () => {
   }, [username]);
 
   return (
-    <div className="github-profile-finder">
-      {message !== "" && <div>{message}</div>}
-      <div className="search-container">
-        <input
-          type="text"
-          placeholder="Enter a GitHub username"
-          value={username}
-          onChange={handleInputChange}
-        />
+    <div>
+      <p>
+        Designed by Ajay Meena :{" "}
+        <a href="https://www.linkedin.com/in/ajay-meena1/">linkdin</a>
+      </p>
+      <div className="github-profile-finder">
+        {message !== "" && <div>{message}</div>}
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Enter a GitHub username"
+            value={username}
+            onChange={handleInputChange}
+          />
+        </div>
+        {user !== "" && (
+          <>
+            <div className="user-info">
+              <img src={user.avatar_url} alt={user.name} className="avatar" />
+              <h2>{user.name}</h2>
+              <p>{user.bio}</p>
+              <ul>
+                <li>{user.followers} followers</li>
+                <li>{user.following} following</li>
+                <li>{user.public_repos} repositories</li>
+              </ul>
+            </div>
+            <div className="user-repos">
+              <h2>Latest Repositories</h2>
+              <ul>
+                {repos.length &&
+                  repos.map((repo) => (
+                    <li key={repo.id}>
+                      <a
+                        href={repo.html_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {repo.name}
+                      </a>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          </>
+        )}
       </div>
-      {user !== "" && (
-        <>
-          <div className="user-info">
-            <img src={user.avatar_url} alt={user.name} className="avatar" />
-            <h2>{user.name}</h2>
-            <p>{user.bio}</p>
-            <ul>
-              <li>{user.followers} followers</li>
-              <li>{user.following} following</li>
-              <li>{user.public_repos} repositories</li>
-            </ul>
-          </div>
-          <div className="user-repos">
-            <h2>Latest Repositories</h2>
-            <ul>
-              {repos.length &&
-                repos.map((repo) => (
-                  <li key={repo.id}>
-                    <a
-                      href={repo.html_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {repo.name}
-                    </a>
-                  </li>
-                ))}
-            </ul>
-          </div>
-        </>
-      )}
     </div>
   );
 };
